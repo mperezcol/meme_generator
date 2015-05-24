@@ -1,4 +1,5 @@
 <?php
+	#author: https://github.com/mperezcol
 	$memesArray = array(61579=>'One Does Not Simply',
 						438680=>'Batman Slapping Robin',
 						101470=>'Ancient Aliens',

@@ -1,4 +1,5 @@
 <?php
+#author: https://github.com/mperezcol
 require_once("memes.php");
 
 # Grab some of the values from the slash command, create vars for post back to Slack
@@ -34,7 +35,7 @@ if((!is_null($paramArray)) && (!empty($paramArray)) ){
 }
 #Get Meme's id from the array
 if( (is_null($pattern)) || (empty($pattern)) ){
-  $pattern = "one dows not simply";
+  $pattern = "One Does Not Simply";
   $claveMeme = "61579";
 }else{
   $claveMeme = null;
@@ -59,7 +60,6 @@ if(is_null($channel) || empty($channel) ){
 #Generating Meme's image using imgflip API and CURL
 $imageUrl = "https://api.imgflip.com/caption_image?username=imgflip_hubot&password=imgflip_hubot&template_id=" . $claveMeme . 
             "&text0=". $upText ."&text1=" . $downText;
-
 $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -72,6 +72,12 @@ $final = json_decode($result);
 
 #Use Meme's image as the slack text
 $finalText = "<".$final->data->url.">";
+
+if((is_null($finalText)) || (empty($finalText))){
+  $msg = "There has been a problem with imgflip API :" . $final->error_message;
+  die($msg);
+  echo $msg;
+}
 
 #Post to slack hook, using CURL
 $data = array("channel"     => $channel,
@@ -91,5 +97,5 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 $result = curl_exec($ch);
 
 #Print response to slack user
-echo "done ";
+echo "Your MEME has been published: " . $channel;
 ?> 
