@@ -70,13 +70,17 @@ $result=curl_exec($ch);
 curl_close($ch);
 $final = json_decode($result);
 
-#Use Meme's image as the slack text
-$finalText = "<".$final->data->url.">";
-
-if((is_null($finalText)) || (empty($finalText))){
-  $msg = "There has been a problem with imgflip API :" . $final->error_message;
-  die($msg);
+if($final->success){
+  #Use Meme's image as the slack text
+  $finalText = "<".$final->data->url.">";
+}else{
+  if(is_null($final->error_message) || (empty($final->error_message))){
+    $msg = "There has been a problem with imgflip API : meme template invalid";
+  }else{
+    $msg = "There has been a problem with imgflip API :" . $final->error_message;
+  }
   echo $msg;
+  exit;
 }
 
 #Post to slack hook, using CURL
@@ -97,5 +101,5 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 $result = curl_exec($ch);
 
 #Print response to slack user
-echo "Your MEME has been published: " . $channel;
+echo "Your MEME has been published to: " . $channel;
 ?> 
